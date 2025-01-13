@@ -1,8 +1,8 @@
 import os
 
 from .datastasher import CsvWriterNode
-from .immature import ImmatureImageDataLoader
-from .counter import ImmatureImageCounter
+from .dataloader import ImmatureImageDataLoader
+from .imagecounter import ImmatureImageCounter
 
 # A dictionary that contains all nodes you want to export with their names
 NODE_CLASS_MAPPINGS = {

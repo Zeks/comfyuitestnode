@@ -12,8 +12,8 @@ class ImmatureImageDataLoader:
             }
         }
 
-    RETURN_TYPES = ( "INT","STRING","STRING","STRING")
-    RETURN_NAMES = ("seed","image_name", "headings_illustrous", "prompt")
+    RETURN_TYPES = ( "INT","INT","INT","STRING")
+    RETURN_NAMES = ("seed", "width", "height", "prompt")
     OUTPUT_NODE = True
     
     FUNCTION = "loadImageData"
@@ -23,29 +23,28 @@ class ImmatureImageDataLoader:
     def loadImageData(self, index, date):
         print("LOADING DATA")
         # Determine the correct date to use
+        dateFormat = "%Y-%m-%d"
         if not date:
-            current_date = datetime.now().strftime("%Y-%m-%d")
+            current_date = datetime.now().strftime(dateFormat)
             print("current date will be", current_date)
         else:
             try:
-                current_date = datetime.strptime(date, "%Y-%m-%d").strftime("%Y-%m-%d")
+                current_date = datetime.strptime(date, dateFormat).strftime(dateFormat)
             except ValueError:
                 print("VALUE ERROR")
-                return (0, "", "", "", "")
+                return (0, 1024, 1024, "")
 
         # Define the image folder path
-        image_folder_path = f"ComfyUI/output/immaturate/{current_date}/immature"
+        image_folder_path = f"ComfyUI/output/rapidfire/{current_date}/latent"
 
         # Ensure the 'data' directory exists and get the CSV file name
-        path, filename = os.path.split(os.path.realpath(__file__))
-        csv_filename = f"{path}/data/{current_date}.csv"
+        csv_filename = f"ComfyUI/output/rapidfire/{current_date}/data.csv"
 
         # Initialize dictionaries for filenames and CSV data
         image_filenames_dict = {}
         csv_data_by_seed = {}
         # Read image filenames from the folder
         if os.path.exists(image_folder_path) and os.path.isdir(image_folder_path):
-            print("READING IMAGE FOLDER")
             for filename in os.listdir(image_folder_path):
                 if filename.lower().endswith('.png'):
                     root, _ = os.path.splitext(filename)
@@ -56,15 +55,14 @@ class ImmatureImageDataLoader:
 
         # Read CSV data and index by 'seed'
         if os.path.exists(csv_filename) and os.path.isfile(csv_filename):
-            print("READING CSV FILE")
             with open(csv_filename, mode='r', newline='', encoding='utf-8') as csvfile:
                 reader = csv.DictReader(csvfile)
                 for row in reader:
                     seed = int(row["seed"])
                     csv_data_by_seed[seed] = {
-                        "imagename": "",
-                        "prompt_headings_a": row.get("prompt_headings_a", ""),
-                        "prompt_body": row.get("prompt_body", "")
+                        "width": int(row.get("width", "")),
+                        "height": int(row.get("height", "")),
+                        "body": row.get("body", "")
                     }
         else:
             print("csv file does not exist",csv_filename)                    
@@ -85,10 +83,10 @@ class ImmatureImageDataLoader:
 
             return (
                 seed,
-                csv_entry.get("imagename", ""),
-                csv_entry.get("prompt_headings_a", ""),
-                csv_entry.get("prompt_body", "")
+                csv_entry.get("width", ""),
+                csv_entry.get("height", ""),
+                csv_entry.get("body", "")
             )
         else:
             # If index is out of range, return default values
-            return (0, "", "", "")
+            return (0, 1024, 1024, "")
