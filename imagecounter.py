@@ -6,7 +6,8 @@ class ImmatureImageCounter:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "date": ("STRING", {"default": ""})
+                "date": ("STRING", {"default": ""}),
+                "subfolder": ("STRING", {"default": "latent"})
             }
         }
     
@@ -21,7 +22,7 @@ class ImmatureImageCounter:
 
     CATEGORY = "utils"
 
-    def count_images(self, date):
+    def count_images(self, date, subfolder):
         dateFormat = "%Y-%m-%d"
         # Determine the correct date to use
         if not date:
@@ -33,7 +34,7 @@ class ImmatureImageCounter:
                 return (0,)
 
         # Define the image folder path
-        image_folder_path = f"ComfyUI/output/rapidfire/{current_date}/latent"
+        image_folder_path = f"ComfyUI/output/rapidfire/{current_date}/{subfolder}"
 
         # Initialize PNG file count
         png_count = 0

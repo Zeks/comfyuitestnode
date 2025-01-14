@@ -8,7 +8,8 @@ class ImmatureImageDataLoader:
         return {
             "required": {
                 "index": ("INT", {"default": 0}),
-                "date": ("STRING", {"default": ""})
+                "date": ("STRING", {"default": ""}),
+                "subfolder": ("STRING", {"default": "latent"})
             }
         }
 
@@ -19,8 +20,8 @@ class ImmatureImageDataLoader:
     FUNCTION = "loadImageData"
 
     CATEGORY = "utils"
-
-    def loadImageData(self, index, date):
+    
+    def loadImageData(self, index, date, subfolder):
         print("LOADING DATA")
         # Determine the correct date to use
         dateFormat = "%Y-%m-%d"
@@ -35,7 +36,7 @@ class ImmatureImageDataLoader:
                 return (0, 1024, 1024, "")
 
         # Define the image folder path
-        image_folder_path = f"ComfyUI/output/rapidfire/{current_date}/latent"
+        image_folder_path = f"ComfyUI/output/rapidfire/{current_date}/{subfolder}"
 
         # Ensure the 'data' directory exists and get the CSV file name
         csv_filename = f"ComfyUI/output/rapidfire/{current_date}/data.csv"
